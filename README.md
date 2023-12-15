@@ -8,6 +8,6 @@ Github Actions and some minor tests.
 ## Executing, Testing
 
 ```
-  mix deps.get
-  mix test
+mix deps.get
+mix test
 ```
