@@ -1,6 +1,8 @@
 defmodule IslandsEngine.Island do
   alias IslandsEngine.{Coordinate, Island}
 
+  @type shapes() :: [:atoll | :dot | :l_shape | :s_shape | :square]
+
   @enforce_keys [:coordinates, :hit_coordinates]
   defstruct [:coordinates, :hit_coordinates]
 

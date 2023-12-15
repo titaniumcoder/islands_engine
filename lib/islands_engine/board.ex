@@ -1,8 +1,14 @@
 defmodule IslandsEngine.Board do
   alias IslandsEngine.{Coordinate, Island}
 
+  @type shapes() :: Island.shapes()
+
+  @type t() :: %{shapes() => Island.t()}
+
+  @type new() :: %{shapes() => Island.t()}
   def new(), do: %{}
 
+  @spec position_island(t(), shapes(), Island.t()) :: {:error, :overlapping_island} | t()
   def position_island(board, key, %Island{} = island) do
     case overlaps_existing_island?(board, key, island) do
       true -> {:error, :overlapping_island}
