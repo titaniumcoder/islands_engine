@@ -7,7 +7,7 @@ defmodule IslandsEngine.BoardTest do
   test "check board functionality as a whole" do
     board = Board.new()
 
-    {:ok, square_coordinate} = Coordinate.new(1,1)
+    {:ok, square_coordinate} = Coordinate.new(1, 1)
     {:ok, square} = Island.new(:square, square_coordinate)
 
     board = Board.position_island(board, :square, square)
@@ -33,7 +33,6 @@ defmodule IslandsEngine.BoardTest do
     board = Board.position_island(board, :square, square)
 
     {:ok, win_coordinate} = Coordinate.new(3, 3)
-    assert {:hit, :dot, :win, board} = Board.guess(board, win_coordinate)
+    assert {:hit, :dot, :win, _board} = Board.guess(board, win_coordinate)
   end
-
 end
