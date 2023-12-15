@@ -1,14 +1,18 @@
 defmodule IslandsEngine.Guesses do
-  alias IslandsEngine.{Coordinate, Guesses}
+  alias IslandsEngine.Coordinate
+
+  @type t() :: %__MODULE__{hits: MapSet.t(Coordinate.t()), misses: MapSet.t(Coordinate.t())}
 
   @enforce_keys [:hits, :misses]
   defstruct [:hits, :misses]
 
-  def new(), do: %Guesses{hits: MapSet.new(), misses: MapSet.new()}
+  @spec new() :: t()
+  def new(), do: %__MODULE__{hits: MapSet.new(), misses: MapSet.new()}
 
-  def add(%Guesses{} = guesses, :hit, %Coordinate{} = coordinate),
+  @spec add(t(), :hit | :miss, Coordinate.t()) :: t()
+  def add(%__MODULE__{} = guesses, :hit, %Coordinate{} = coordinate),
     do: update_in(guesses.hits, &MapSet.put(&1, coordinate))
 
-  def add(%Guesses{} = guesses, :miss, %Coordinate{} = coordinate),
+  def add(%__MODULE__{} = guesses, :miss, %Coordinate{} = coordinate),
     do: update_in(guesses.misses, &MapSet.put(&1, coordinate))
 end

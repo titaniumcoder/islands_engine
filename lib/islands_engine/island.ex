@@ -1,11 +1,18 @@
 defmodule IslandsEngine.Island do
-  alias IslandsEngine.{Coordinate, Island}
+  alias IslandsEngine.Coordinate
+  alias IslandsEngine.Island
 
   @type shapes() :: [:atoll | :dot | :l_shape | :s_shape | :square]
+  @type t() :: %__MODULE__{
+          coordinates: MapSet.t(Coordinate.t()),
+          hit_coordinates: MapSet.t(Coordinate.t())
+        }
 
   @enforce_keys [:coordinates, :hit_coordinates]
   defstruct [:coordinates, :hit_coordinates]
 
+  @spec new(shapes(), Coordinate.t()) ::
+          {:ok, t()} | {:error, :invalid_coordinate} | {:error, :invalid_island_type}
   def new(type, %Coordinate{} = upper_left) do
     with [_ | _] = offsets <- offsets(type),
          %MapSet{} = coordinates <- add_coordinates(offsets, upper_left) do
@@ -36,9 +43,11 @@ defmodule IslandsEngine.Island do
     end
   end
 
+  @spec overlaps?(t(), t()) :: boolean()
   def overlaps?(existing_island, new_island),
     do: not MapSet.disjoint?(existing_island.coordinates, new_island.coordinates)
 
+  @spec guess(t(), Coordinate.t()) :: {:hit, t()} | :miss
   def guess(island, coordinate) do
     case MapSet.member?(island.coordinates, coordinate) do
       true ->
@@ -50,7 +59,9 @@ defmodule IslandsEngine.Island do
     end
   end
 
+  @spec forested?(t()) :: boolean()
   def forested?(island), do: MapSet.equal?(island.coordinates, island.hit_coordinates)
 
+  @spec types() :: shapes()
   def types(), do: [:atoll, :dot, :l_shape, :s_shape, :square]
 end

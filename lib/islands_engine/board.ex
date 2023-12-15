@@ -1,18 +1,19 @@
 defmodule IslandsEngine.Board do
-  alias IslandsEngine.{Coordinate, Island}
+  alias IslandsEngine.Coordinate
+  alias IslandsEngine.Island
 
   @type shapes() :: Island.shapes()
-
   @type t() :: %{shapes() => Island.t()}
 
-  @type new() :: %{shapes() => Island.t()}
+  @spec new() :: t()
   def new(), do: %{}
 
   @spec position_island(t(), shapes(), Island.t()) :: {:error, :overlapping_island} | t()
   def position_island(board, key, %Island{} = island) do
-    case overlaps_existing_island?(board, key, island) do
-      true -> {:error, :overlapping_island}
-      false -> Map.put(board, key, island)
+    if overlaps_existing_island?(board, key, island) do
+      {:error, :overlapping_island}
+    else
+      Map.put(board, key, island)
     end
   end
 
@@ -22,8 +23,10 @@ defmodule IslandsEngine.Board do
     end)
   end
 
+  @spec all_island_positioned?(t()) :: boolean()
   def all_island_positioned?(board), do: Enum.all?(Island.types(), &Map.has_key?(board, &1))
 
+  @spec guess(t(), Coordinate.t()) :: {:hit | :miss, shapes() | :none, :win | :no_win, t()}
   def guess(board, %Coordinate{} = coordinate) do
     board
     |> check_all_islands(coordinate)
@@ -60,9 +63,10 @@ defmodule IslandsEngine.Board do
   end
 
   defp win_check(board) do
-    case all_forested?(board) do
-      true -> :win
-      false -> :no_win
+    if all_forested?(board) do
+      :win
+    else
+      :no_win
     end
   end
 

@@ -66,3 +66,5 @@ jobs:
 
     - name: Run dialyzer
       run: mix dialyzer --format github
+    - name: Run Credo
+      run: mix credo

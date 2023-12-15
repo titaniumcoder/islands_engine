@@ -2,7 +2,8 @@ defmodule IslandsEngine.IslandTest do
   use ExUnit.Case
   doctest IslandsEngine.Island
 
-  alias IslandsEngine.{Island, Coordinate}
+  alias IslandsEngine.Coordinate
+  alias IslandsEngine.Island
 
   test "creates an island with l_shape" do
     {:ok, coordinate} = Coordinate.new(4, 6)

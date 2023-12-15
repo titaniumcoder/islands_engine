@@ -2,7 +2,8 @@ defmodule IslandsEngine.GuessesTest do
   use ExUnit.Case
   doctest IslandsEngine.Guesses
 
-  alias IslandsEngine.{Guesses, Coordinate}
+  alias IslandsEngine.Coordinate
+  alias IslandsEngine.Guesses
 
   test "add guess that hits" do
     {:ok, coordinate1} = Coordinate.new(8, 3)

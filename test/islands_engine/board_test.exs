@@ -2,7 +2,9 @@ defmodule IslandsEngine.BoardTest do
   use ExUnit.Case
   doctest IslandsEngine.Board
 
-  alias IslandsEngine.{Island, Coordinate, Board}
+  alias IslandsEngine.Board
+  alias IslandsEngine.Coordinate
+  alias IslandsEngine.Island
 
   test "check board functionality as a whole" do
     board = Board.new()

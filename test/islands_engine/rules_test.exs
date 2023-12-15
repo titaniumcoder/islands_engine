@@ -2,7 +2,7 @@ defmodule IslandsEngine.RulesTest do
   use ExUnit.Case
   doctest IslandsEngine.Rules
 
-  alias IslandsEngine.{Rules}
+  alias IslandsEngine.Rules
 
   test "adding player works" do
     rules = Rules.new()
