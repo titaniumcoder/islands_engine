@@ -1,4 +1,7 @@
 defmodule IslandsEngine.Board do
+  @moduledoc """
+  Managing the board with all it islands.
+  """
   alias IslandsEngine.Coordinate
   alias IslandsEngine.Island
 

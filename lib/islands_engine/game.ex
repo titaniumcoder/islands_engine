@@ -1,5 +1,9 @@
 defmodule IslandsEngine.Game do
-  use GenServer
+  @moduledoc """
+  Manages the state of the game itself.
+  """
+
+use GenServer
 
   alias IslandsEngine.Board
   alias IslandsEngine.Coordinate

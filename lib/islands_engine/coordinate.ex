@@ -1,4 +1,7 @@
 defmodule IslandsEngine.Coordinate do
+  @moduledoc """
+  Simple representation of a coordinate (row and column).
+  """
   @type t() :: %__MODULE__{row: pos_integer(), col: pos_integer()}
 
   @board_range 1..10

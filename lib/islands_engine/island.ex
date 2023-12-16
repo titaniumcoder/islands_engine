@@ -1,4 +1,7 @@
 defmodule IslandsEngine.Island do
+  @moduledoc """
+  Manages the state of an island.
+  """
   alias IslandsEngine.Coordinate
   alias IslandsEngine.Island
 

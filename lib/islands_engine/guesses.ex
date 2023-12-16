@@ -1,4 +1,7 @@
 defmodule IslandsEngine.Guesses do
+  @moduledoc """
+  Manages the state of guesses by a player.
+  """
   alias IslandsEngine.Coordinate
 
   @type t() :: %__MODULE__{hits: MapSet.t(Coordinate.t()), misses: MapSet.t(Coordinate.t())}
