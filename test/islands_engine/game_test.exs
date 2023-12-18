@@ -1,7 +1,9 @@
 defmodule IslandsEngine.GameTest do
   use ExUnit.Case
   doctest IslandsEngine.Game
+
   alias IslandsEngine.Game
+  alias IslandsEngine.Rules
 
   setup do
     {:ok, game} = start_supervised({Game, "Frank"})
@@ -42,6 +44,14 @@ defmodule IslandsEngine.GameTest do
     test "cannot position island out of board", %{game: game} do
       assert Game.position_island(game, :player1, :l_shape, 10, 10) ==
                {:error, :invalid_coordinate}
+    end
+
+    test "cannot position islands once playing", %{game: game} do
+      :sys.replace_state(game, fn state_data ->
+        %{state_data | rules: %Rules{state: :player1_turn}}
+      end)
+
+      assert Game.position_island(game, :player1, :dot, 5, 5) == :error
     end
   end
 end
