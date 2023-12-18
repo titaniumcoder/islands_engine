@@ -3,7 +3,7 @@ defmodule IslandsEngine.Game do
   Manages the state of the game itself.
   """
 
-use GenServer
+  use GenServer
 
   alias IslandsEngine.Board
   alias IslandsEngine.Coordinate

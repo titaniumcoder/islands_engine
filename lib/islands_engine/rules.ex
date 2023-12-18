@@ -3,7 +3,7 @@ defmodule IslandsEngine.Rules do
   FSM for the game.
   """
 
-@type states() ::
+  @type states() ::
           :initialized | :players_set | :islands_set | :player1_turn | :player2_turn | :game_over
   @type player_states() :: :islands_not_set | :islands_set
   @type players() :: :player1 | :player2
