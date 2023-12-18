@@ -12,7 +12,7 @@ defmodule IslandsEngine.Game do
   alias IslandsEngine.Rules
 
   @players [:player1, :player2]
-  @timeout 15_000
+  @timeout 60 * 60 * 24 * 1_000
 
   #### Client API ####
   @spec start_link(String.t()) :: GenServer.on_start()
@@ -42,9 +42,8 @@ defmodule IslandsEngine.Game do
   #### Server API ####
   @impl GenServer
   def init(name) do
-    player1 = %{name: name, board: Board.new(), guesses: Guesses.new()}
-    player2 = %{name: nil, board: Board.new(), guesses: Guesses.new()}
-    {:ok, %{player1: player1, player2: player2, rules: Rules.new()}, @timeout}
+    send(self(), {:set_state, name})
+    {:ok, fresh_state(name)}
   end
 
   @impl GenServer
@@ -117,6 +116,24 @@ defmodule IslandsEngine.Game do
     end
   end
 
+  @impl GenServer
+  def handle_info(:timeout, state) do
+    {:stop, {:shutdown, :timeout}, state}
+  end
+
+  @impl GenServer
+  def handle_info({:set_state, name}, _state) do
+    state_data =
+      case :ets.lookup(:game_state, name) do
+        [] -> fresh_state(name)
+        [{_key, state}] -> state
+      end
+
+    :ets.insert(:game_state, {name, state_data})
+
+    {:noreply, state_data, @timeout}
+  end
+
   #### Helper Functions ####
   defp update_player2_name(state, name), do: put_in(state.player2.name, name)
 
@@ -131,10 +148,19 @@ defmodule IslandsEngine.Game do
     end)
   end
 
-  defp reply_success(state, reply), do: {:reply, reply, state, @timeout}
+  defp reply_success(state, reply) do
+    :ets.insert(:game_state, {state.player1.name, state})
+    {:reply, reply, state, @timeout}
+  end
 
   defp player_board(state, player), do: Map.get(state, player).board
 
   defp opponent(:player1), do: :player2
   defp opponent(:player2), do: :player1
+
+  defp fresh_state(name) do
+    player1 = %{name: name, board: Board.new(), guesses: Guesses.new()}
+    player2 = %{name: nil, board: Board.new(), guesses: Guesses.new()}
+    {:ok, %{player1: player1, player2: player2, rules: Rules.new()}, @timeout}
+  end
 end

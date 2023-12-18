@@ -4,10 +4,10 @@ defmodule IslandsEngine.GameSupervisor do
 
   alias IslandsEngine.Game
 
-  def start_link(init_args), do: DynamicSupervisor.start_link(__MODULE__, init_args, name: __MODULE__)
+  def start_link(init_args),
+    do: DynamicSupervisor.start_link(__MODULE__, init_args, name: __MODULE__)
 
-  def start_game(name), do:
-    DynamicSupervisor.start_child(__MODULE__, {Game, name})
+  def start_game(name), do: DynamicSupervisor.start_child(__MODULE__, {Game, name})
 
   def stop_game(name) do
     DynamicSupervisor.terminate_child(__MODULE__, pid_from_name(name))
