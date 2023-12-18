@@ -54,4 +54,50 @@ defmodule IslandsEngine.GameTest do
       assert Game.position_island(game, :player1, :dot, 5, 5) == :error
     end
   end
+
+  describe "set_islands/2" do
+    setup %{game: game} do
+      Game.add_player(game, "Wilma")
+    end
+
+    test "cannot continue without all islands positioned", %{game: game} do
+      assert Game.set_islands(game, :player1) == {:error, :not_all_islands_positioned}
+    end
+
+    test "can continue once islands are set", %{game: game} do
+      Game.position_island(game, :player1, :atoll, 1, 1)
+      Game.position_island(game, :player1, :dot, 1, 4)
+      Game.position_island(game, :player1, :l_shape, 1, 5)
+      Game.position_island(game, :player1, :s_shape, 5, 1)
+      Game.position_island(game, :player1, :square, 5, 5)
+
+      {:ok, %{s_shape: _, l_shape: _, atoll: _, dot: _, square: _}} =
+        Game.set_islands(game, :player1)
+    end
+  end
+
+  describe "guess_coordinate/4" do
+    setup %{game: game} do
+      Game.add_player(game, "Trane")
+      Game.position_island(game, :player1, :dot, 1, 1)
+      Game.position_island(game, :player2, :square, 1, 1)
+
+      # and along comes the test cheater
+      :sys.replace_state(game, fn data ->
+        %{data | rules: %Rules{state: :player1_turn}}
+      end)
+
+      %{game: game}
+    end
+    test "can guess a miss", %{game: game} do
+      assert Game.guess_coordinate(game, :player1, 5, 5) == {:miss, :none, :no_win}
+    end
+    test "can't guess if it's not his round", %{game: game} do
+      assert Game.guess_coordinate(game, :player2, 5, 5) == :error
+    end
+    test "hit's the game winner", %{game: game} do
+      Game.guess_coordinate(game, :player1, 5, 5)
+      assert Game.guess_coordinate(game, :player2, 1, 1) == {:hit, :dot, :win}
+    end
+  end
 end
