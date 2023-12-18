@@ -3,7 +3,7 @@ defmodule IslandsEngine.Game do
   Manages the state of the game itself.
   """
 
-  use GenServer
+  use GenServer, restart: :transient
 
   alias IslandsEngine.Board
   alias IslandsEngine.Coordinate
@@ -12,10 +12,15 @@ defmodule IslandsEngine.Game do
   alias IslandsEngine.Rules
 
   @players [:player1, :player2]
+  @timeout 15_000
 
   #### Client API ####
   @spec start_link(String.t()) :: GenServer.on_start()
-  def start_link(name) when is_binary(name), do: GenServer.start_link(__MODULE__, name, [])
+  def start_link(name) when is_binary(name),
+    do: GenServer.start_link(__MODULE__, name, name: via_tuple(name))
+
+  @spec via_tuple(String.t()) :: {:via, Registry, {Registry.Game, String.t()}}
+  def via_tuple(name), do: {:via, Registry, {Registry.Game, name}}
 
   @spec add_player(pid(), String.t()) :: :ok
   def add_player(game, name) when is_binary(name), do: GenServer.call(game, {:add_player, name})
@@ -39,7 +44,7 @@ defmodule IslandsEngine.Game do
   def init(name) do
     player1 = %{name: name, board: Board.new(), guesses: Guesses.new()}
     player2 = %{name: nil, board: Board.new(), guesses: Guesses.new()}
-    {:ok, %{player1: player1, player2: player2, rules: Rules.new()}}
+    {:ok, %{player1: player1, player2: player2, rules: Rules.new()}, @timeout}
   end
 
   @impl GenServer
@@ -126,7 +131,7 @@ defmodule IslandsEngine.Game do
     end)
   end
 
-  defp reply_success(state, reply), do: {:reply, reply, state}
+  defp reply_success(state, reply), do: {:reply, reply, state, @timeout}
 
   defp player_board(state, player), do: Map.get(state, player).board
 
