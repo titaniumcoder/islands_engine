@@ -89,12 +89,15 @@ defmodule IslandsEngine.GameTest do
 
       %{game: game}
     end
+
     test "can guess a miss", %{game: game} do
       assert Game.guess_coordinate(game, :player1, 5, 5) == {:miss, :none, :no_win}
     end
+
     test "can't guess if it's not his round", %{game: game} do
       assert Game.guess_coordinate(game, :player2, 5, 5) == :error
     end
+
     test "hit's the game winner", %{game: game} do
       Game.guess_coordinate(game, :player1, 5, 5)
       assert Game.guess_coordinate(game, :player2, 1, 1) == {:hit, :dot, :win}
