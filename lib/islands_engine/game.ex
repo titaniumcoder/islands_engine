@@ -56,7 +56,7 @@ defmodule IslandsEngine.Game do
         |> reply_success(:ok)
 
       :error ->
-        {:replay, :error, state}
+        {:reply, :error, state}
     end
   end
 
