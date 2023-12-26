@@ -6,7 +6,7 @@ defmodule IslandsEngine.GameTest do
   alias IslandsEngine.Rules
 
   setup do
-    {:ok, game} = start_supervised({Game, "Frank"})
+    {:ok, game} = start_supervised({Game, "Frank-" <> :crypto.strong_rand_bytes(100)})
     %{game: game}
   end
 
