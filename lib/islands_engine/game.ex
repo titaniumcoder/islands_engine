@@ -14,28 +14,30 @@ defmodule IslandsEngine.Game do
   @players [:player1, :player2]
   @timeout 60 * 60 * 24 * 1_000
 
+  @type game_via :: {:via, Registry, {Registry.Game, String.t()}}
+
   #### Client API ####
   @spec start_link(String.t()) :: GenServer.on_start()
   def start_link(name) when is_binary(name),
     do: GenServer.start_link(__MODULE__, name, name: via_tuple(name))
 
-  @spec via_tuple(String.t()) :: {:via, Registry, {Registry.Game, String.t()}}
+  @spec via_tuple(String.t()) :: :game_via
   def via_tuple(name), do: {:via, Registry, {Registry.Game, name}}
 
-  @spec add_player(pid(), String.t()) :: :ok
+  @spec add_player(GenServer.server(), String.t()) :: :ok
   def add_player(game, name) when is_binary(name), do: GenServer.call(game, {:add_player, name})
 
-  @spec position_island(pid(), Rules.players(), Island.shapes(), pos_integer(), pos_integer()) ::
+  @spec position_island(GenServer.server(), Rules.players(), Island.shapes(), pos_integer(), pos_integer()) ::
           :ok | :error | {:error, :invalid_coordinate} | {:error, :invalid_island_type}
   def position_island(game, player, key, row, col) when player in @players,
     do: GenServer.call(game, {:position_island, player, key, row, col})
 
-  @spec set_islands(pid(), Rules.players()) ::
+  @spec set_islands(GenServer.server(), Rules.players()) ::
           :ok | :error | {:error, :not_all_islands_positioned}
   def set_islands(game, player) when player in @players,
     do: GenServer.call(game, {:set_islands, player})
 
-  @spec guess_coordinate(pid(), Rules.players(), pos_integer(), pos_integer()) :: any()
+  @spec guess_coordinate(GenServer.server(), Rules.players(), pos_integer(), pos_integer()) :: any()
   def guess_coordinate(game, player, row, col) when player in @players,
     do: GenServer.call(game, {:guess_coordinate, player, row, col})
 
