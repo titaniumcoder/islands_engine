@@ -134,6 +134,14 @@ defmodule IslandsEngine.Game do
     {:noreply, state_data, @timeout}
   end
 
+  @impl GenServer
+  def terminate({:shutdown, :timeout}, state_data) do
+    :ets.delete(:game_state, state_data.player1.name)
+    :ok
+  end
+
+  def terminate(_reason, _state), do: :ok
+
   #### Helper Functions ####
   defp update_player2_name(state, name), do: put_in(state.player2.name, name)
 
